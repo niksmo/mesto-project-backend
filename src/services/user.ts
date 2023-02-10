@@ -66,6 +66,7 @@ async function changeOwnData(
       { name, about },
       {
         new: true,
+        runValidators: true,
       }
     );
 
@@ -76,6 +77,10 @@ async function changeOwnData(
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
+    }
+
+    if (error instanceof mongoose.Error.ValidationError) {
+      throw ApiError.BadRequest(error.message);
     }
 
     throw ApiError.InternalError();
@@ -92,6 +97,7 @@ async function changeAvatar({
       { avatar },
       {
         new: true,
+        runValidators: true,
       }
     );
     if (user === null) {
@@ -101,6 +107,10 @@ async function changeAvatar({
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;
+    }
+
+    if (error instanceof mongoose.Error.ValidationError) {
+      throw ApiError.BadRequest(error.message);
     }
 
     throw ApiError.InternalError();
