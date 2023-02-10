@@ -3,14 +3,14 @@ import cardsController from '../controllers/cards';
 
 const cardsRouter = express.Router();
 
-cardsRouter.post('/cards', cardsController.postCard);
+cardsRouter.post('/', cardsController.postCard);
 
-cardsRouter.get('/cards', cardsController.getCards);
+cardsRouter.get('/', cardsController.getCards);
 
-cardsRouter.delete('/cards/:cardId', cardsController.deleteCard);
+cardsRouter.delete('/:cardId', cardsController.deleteCard);
 
-cardsRouter.put('/cards/:cardId/likes', cardsController.likeCard);
+cardsRouter.put('/:cardId/likes', cardsController.likeCard);
 
-cardsRouter.delete('/cards/:cardId/likes', cardsController.dislikeCard);
+cardsRouter.delete('/:cardId/likes', cardsController.dislikeCard);
 
 export default cardsRouter;
