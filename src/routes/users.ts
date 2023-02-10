@@ -3,14 +3,14 @@ import usersController from '../controllers/users';
 
 const usersRouter = express.Router();
 
-usersRouter.post('/users', usersController.signup);
+usersRouter.post('/', usersController.signup);
 
-usersRouter.get('/users', usersController.getUsers);
+usersRouter.get('/', usersController.getUsers);
 
-usersRouter.get('/users/:userId', usersController.findUserById);
+usersRouter.get('/:userId', usersController.findUserById);
 
-usersRouter.patch('/users/me', usersController.changeOwnData);
+usersRouter.patch('/me', usersController.changeOwnData);
 
-usersRouter.patch('/users/me/avatar', usersController.changeAvatar);
+usersRouter.patch('/me/avatar', usersController.changeAvatar);
 
 export default usersRouter;

@@ -14,7 +14,7 @@ async function postCard(req: Request, res: Response, next: NextFunction) {
       const { name, link } = req.body;
       const { _id: ownerId } = req.user;
       const preservedCard = await cardService.postCard({ name, link, ownerId });
-      res.send(preservedCard);
+      res.status(201).send(preservedCard);
     } catch (error) {
       next(error);
     }

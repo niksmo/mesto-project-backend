@@ -4,6 +4,7 @@ import usersRouter from './users';
 
 const router = express.Router();
 
-router.use(usersRouter, cardsRouter);
+router.use('/users', usersRouter);
+router.use('/cards', cardsRouter);
 
 export default router;
