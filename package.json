@@ -2,7 +2,7 @@
   "name": "mesto-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/app.ts",
   "scripts": {
     "lint": "npx eslint ./src/**/*.ts",
     "start": "ts-node ./src/app.ts",
