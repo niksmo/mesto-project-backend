@@ -45,8 +45,16 @@ async function login(
 ) {
   try {
     const { email, password } = req.body;
-    const resBody = await userService.login({ email, password });
-    res.send(resBody);
+    const { accessToken, status } = await userService.login({
+      email,
+      password,
+    });
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: true,
+    });
+    res.send(status);
   } catch (error) {
     next(error);
   }

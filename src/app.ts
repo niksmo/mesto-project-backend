@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import mongoose, { Error } from 'mongoose';
 import errorHandling from './middlewares/errorHandling';
 import fakeAuthUser from './middlewares/fakeAuthUser';
@@ -11,6 +12,8 @@ const { PORT = 3000, MONGODB_URI = 'mongodb://127.0.0.1:27017/mestodb' } =
 mongoose.set('strictQuery', false);
 
 const app = express();
+
+app.use(cookieParser());
 
 app.use(fakeAuthUser);
 
