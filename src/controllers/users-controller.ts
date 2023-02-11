@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import userService from '../services/user-service';
-import { isReqWithUser } from '../middlewares/fakeAuthUser';
 import ApiError from '../exceptions/api-error';
+import { isReqWithUser } from '../middlewares/auth-middleware';
 
 interface ICreateUserReqBody {
   email: string;

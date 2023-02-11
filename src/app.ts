@@ -1,8 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import mongoose, { Error } from 'mongoose';
-import errorHandling from './middlewares/errorHandling';
-import fakeAuthUser from './middlewares/fakeAuthUser';
+import errorHandling from './middlewares/error-middleware';
 import routes from './routes';
 import { printInConsole } from './utils';
 
@@ -14,8 +13,6 @@ mongoose.set('strictQuery', false);
 const app = express();
 
 app.use(cookieParser());
-
-app.use(fakeAuthUser);
 
 app.use(express.json());
 
