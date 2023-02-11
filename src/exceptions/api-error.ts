@@ -12,8 +12,8 @@ class ApiError extends Error implements IApiError {
     this.status = status;
   }
 
-  static Unauthorized() {
-    return new ApiError(401, 'Unauthorized');
+  static Unauthorized(message = 'Unauthorized') {
+    return new ApiError(401, message);
   }
 
   static BadRequest(message: string) {

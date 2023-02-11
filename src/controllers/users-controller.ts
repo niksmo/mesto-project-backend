@@ -54,7 +54,7 @@ async function login(
       maxAge: 7 * 24 * 60 * 60 * 1000,
       sameSite: true,
     });
-    res.send(status);
+    res.send({ status });
   } catch (error) {
     next(error);
   }

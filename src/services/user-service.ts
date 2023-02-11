@@ -43,13 +43,13 @@ async function login(
   const user = await UserModel.findOne({ email }, { password: 1 });
 
   if (user === null) {
-    throw ApiError.BadRequest('Incorrect email or password');
+    throw ApiError.Unauthorized('Incorrect email or password');
   }
 
   const isPwdEqual = await bcrypt.compare(password, user.password);
 
   if (!isPwdEqual) {
-    throw ApiError.Unauthorized();
+    throw ApiError.Unauthorized('Incorrect email or password');
   }
 
   const { accessToken } = tokenService.generateToken(user.id);
