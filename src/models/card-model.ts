@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { RelatedCardSchemaKeys } from './types';
+import { RelatedCardSchemaKeys } from './models-types';
 
 interface ICardSchema {
   name: string;

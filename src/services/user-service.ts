@@ -1,19 +1,33 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 import ApiError from '../exceptions/api-error';
-import UserModel from '../models/user';
-import { UserServiceTypes } from './types';
+import UserModel from '../models/user-model';
+import UserDto from '../dtos/user-dto';
+import tokenService from './token-service';
+import { UserServiceTypes } from './services-types';
 
-async function signup(
-  props: UserServiceTypes.SignupIn
-): UserServiceTypes.SignupOut {
+async function createUser(
+  props: UserServiceTypes.CreateUserProps
+): UserServiceTypes.CreateUserReturn {
   try {
-    const { name, about, avatar } = props;
-    const candidate = new UserModel({ name, about, avatar });
+    const { name, about, avatar, email, password } = props;
 
-    const user = await candidate.save();
+    const hashPassword = await bcrypt.hash(password, 10);
 
-    return user;
+    const preservedUser = await UserModel.create({
+      email,
+      password: hashPassword,
+      name,
+      about,
+      avatar,
+    });
+
+    return UserDto.getDto(preservedUser);
   } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 11000) {
+      throw ApiError.BadRequest('User already exist');
+    }
+
     if (error instanceof mongoose.Error.ValidationError) {
       throw ApiError.BadRequest(error.message);
     }
@@ -21,7 +35,28 @@ async function signup(
   }
 }
 
-async function getUsers(): UserServiceTypes.GetUsersOut {
+async function login(
+  props: UserServiceTypes.LoginProps
+): UserServiceTypes.LoginReturn {
+  const { email, password } = props;
+
+  const user = await UserModel.findOne({ email }, { password: 1 });
+
+  if (user === null) {
+    throw ApiError.BadRequest('Incorrect email or password');
+  }
+
+  const isPwdEqual = await bcrypt.compare(password, user.password);
+
+  if (!isPwdEqual) {
+    throw ApiError.Unauthorized();
+  }
+
+  const { accessToken } = tokenService.generateToken(user.id);
+  return { status: true, accessToken };
+}
+
+async function getUsers(): UserServiceTypes.GetUsersReturn {
   try {
     const users = await UserModel.find({});
 
@@ -32,8 +67,8 @@ async function getUsers(): UserServiceTypes.GetUsersOut {
 }
 
 async function findUserById(
-  props: UserServiceTypes.FindUserByIdIn
-): UserServiceTypes.FindUserByIdOut {
+  props: UserServiceTypes.FindUserByIdProps
+): UserServiceTypes.FindUserByIdReturn {
   try {
     const { userId } = props;
     const user = await UserModel.findById(userId);
@@ -56,8 +91,8 @@ async function findUserById(
 }
 
 async function changeOwnData(
-  props: UserServiceTypes.ChangeOwnDataIn
-): UserServiceTypes.ChangeOwnDataOut {
+  props: UserServiceTypes.ChangeOwnDataProps
+): UserServiceTypes.ChangeOwnDataReturn {
   try {
     const { userId, name, about } = props;
 
@@ -90,7 +125,7 @@ async function changeOwnData(
 async function changeAvatar({
   userId,
   avatar,
-}: UserServiceTypes.ChangeAvatarIn): UserServiceTypes.ChangeAvatarOut {
+}: UserServiceTypes.ChangeAvatarProps): UserServiceTypes.ChangeAvatarReturn {
   try {
     const user = await UserModel.findByIdAndUpdate(
       userId,
@@ -117,4 +152,11 @@ async function changeAvatar({
   }
 }
 
-export default { signup, getUsers, findUserById, changeOwnData, changeAvatar };
+export default {
+  createUser,
+  login,
+  getUsers,
+  findUserById,
+  changeOwnData,
+  changeAvatar,
+};

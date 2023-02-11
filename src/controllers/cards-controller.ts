@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import ApiError from '../exceptions/api-error';
 import { isReqWithUser } from '../middlewares/fakeAuthUser';
-import cardService from '../services/card';
+import cardService from '../services/card-service';
 
 interface IPostCardReqBody {
   name: string;

@@ -1,24 +1,51 @@
 import { NextFunction, Request, Response } from 'express';
-import userService from '../services/user';
+import userService from '../services/user-service';
 import { isReqWithUser } from '../middlewares/fakeAuthUser';
 import ApiError from '../exceptions/api-error';
 
-interface ISignupReqBody {
+interface ICreateUserReqBody {
+  email: string;
+  password: string;
   name: string;
   about: string;
   avatar: string;
 }
 
-async function signup(
-  req: Request<unknown, unknown, ISignupReqBody>,
+async function createUser(
+  req: Request<unknown, unknown, ICreateUserReqBody>,
   res: Response,
   next: NextFunction
 ) {
   try {
-    const { name, about, avatar } = req.body;
+    const { name, about, avatar, email, password } = req.body;
 
-    const resBody = await userService.signup({ name, about, avatar });
+    const resBody = await userService.createUser({
+      name,
+      about,
+      avatar,
+      email,
+      password,
+    });
 
+    res.send(resBody);
+  } catch (error) {
+    next(error);
+  }
+}
+
+interface ILoginReqBody {
+  email: string;
+  password: string;
+}
+
+async function login(
+  req: Request<unknown, unknown, ILoginReqBody>,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { email, password } = req.body;
+    const resBody = await userService.login({ email, password });
     res.send(resBody);
   } catch (error) {
     next(error);
@@ -119,4 +146,11 @@ async function changeAvatar(
   }
 }
 
-export default { signup, getUsers, findUserById, changeOwnData, changeAvatar };
+export default {
+  createUser,
+  login,
+  getUsers,
+  findUserById,
+  changeOwnData,
+  changeAvatar,
+};

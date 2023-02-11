@@ -1,9 +1,7 @@
 import express from 'express';
-import usersController from '../controllers/users';
+import usersController from '../controllers/users-controller';
 
 const usersRouter = express.Router();
-
-usersRouter.post('/', usersController.signup);
 
 usersRouter.get('/', usersController.getUsers);
 
