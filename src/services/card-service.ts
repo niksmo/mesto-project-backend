@@ -1,12 +1,13 @@
 import mongoose from 'mongoose';
-import CardModel from '../models/card';
+import CardModel from '../models/card-model';
+import { IUserSchema } from '../models/user-model';
 import ApiError from '../exceptions/api-error';
-import { CardServiceTypes } from './types';
-import { RelatedCardSchemaKeys } from '../models/types';
+import { CardServiceTypes } from './services-types';
+import { RelatedCardSchemaKeys } from '../models/models-types';
 
 async function postCard(
-  props: CardServiceTypes.PostCardIn
-): CardServiceTypes.PostCardOut {
+  props: CardServiceTypes.PostCardProps
+): CardServiceTypes.PostCardReturn {
   const { ownerId, name, link } = props;
   try {
     const card = new CardModel({ name, link, owner: ownerId });
@@ -26,7 +27,7 @@ async function postCard(
   }
 }
 
-async function getCards(): CardServiceTypes.GetCardsOut {
+async function getCards(): CardServiceTypes.GetCardsReturn {
   try {
     const preservedCards = await CardModel.find({}).populate([
       RelatedCardSchemaKeys.owner,
@@ -39,16 +40,27 @@ async function getCards(): CardServiceTypes.GetCardsOut {
   }
 }
 
-async function deleteCard(cardId: string): CardServiceTypes.DeleteCardOut {
+async function deleteCard(
+  props: CardServiceTypes.DeleteCardProps
+): CardServiceTypes.DeleteCardReturn {
   try {
-    const deletedCard = await CardModel.findByIdAndDelete(cardId).populate([
-      RelatedCardSchemaKeys.likes,
-      RelatedCardSchemaKeys.owner,
-    ]);
+    const { cardId, userId } = props;
 
-    if (deletedCard === null) {
+    const preservedCard = await CardModel.findById(cardId).populate<{
+      owner: IUserSchema;
+      likes: IUserSchema[];
+    }>([RelatedCardSchemaKeys.likes, RelatedCardSchemaKeys.owner]);
+
+    if (preservedCard === null) {
       throw ApiError.NotFound();
     }
+
+    if (preservedCard.owner.id !== userId) {
+      throw ApiError.Forbidden();
+    }
+
+    const deletedCard = await preservedCard.delete();
+
     return deletedCard;
   } catch (error) {
     if (error instanceof ApiError) {
@@ -64,8 +76,8 @@ async function deleteCard(cardId: string): CardServiceTypes.DeleteCardOut {
 }
 
 async function likeCard(
-  props: CardServiceTypes.LikeCardIn
-): CardServiceTypes.LikeCardOut {
+  props: CardServiceTypes.LikeCardProps
+): CardServiceTypes.LikeCardReturn {
   try {
     const { cardId, userId } = props;
 
@@ -95,8 +107,8 @@ async function likeCard(
 }
 
 async function dislikeCard(
-  props: CardServiceTypes.DislikeCardIn
-): CardServiceTypes.DislikeCardOut {
+  props: CardServiceTypes.DislikeCardProps
+): CardServiceTypes.DislikeCardReturn {
   try {
     const { cardId, userId } = props;
 
