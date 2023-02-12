@@ -1,6 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import mongoose, { Error } from 'mongoose';
+import { errors } from 'celebrate';
 import errorHandling from './middlewares/error-middleware';
 import routes from './routes';
 import { printInConsole } from './utils';
@@ -19,6 +20,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/', routes);
+
+app.use(errors());
 
 app.use(errorHandling);
 
