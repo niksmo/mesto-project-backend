@@ -48,8 +48,9 @@ async function deleteCard(
   if (isReqWithUser<ICardIdParams>(req)) {
     try {
       const { cardId } = req.params;
-      const preservedCards = await cardService.deleteCard(cardId);
-      res.send(preservedCards);
+      const { _id: userId } = req.user;
+      const preservedCard = await cardService.deleteCard({ cardId, userId });
+      res.send(preservedCard);
     } catch (error) {
       next(error);
     }
@@ -67,8 +68,8 @@ async function likeCard(
     try {
       const { _id: userId } = req.user;
       const { cardId } = req.params;
-      const preservedCards = await cardService.likeCard({ cardId, userId });
-      res.send(preservedCards);
+      const preservedCard = await cardService.likeCard({ cardId, userId });
+      res.send(preservedCard);
     } catch (error) {
       next(error);
     }
@@ -86,8 +87,8 @@ async function dislikeCard(
     try {
       const { _id: userId } = req.user;
       const { cardId } = req.params;
-      const preservedCards = await cardService.dislikeCard({ cardId, userId });
-      res.send(preservedCards);
+      const preservedCard = await cardService.dislikeCard({ cardId, userId });
+      res.send(preservedCard);
     } catch (error) {
       next(error);
     }

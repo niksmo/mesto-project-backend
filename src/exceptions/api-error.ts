@@ -1,4 +1,4 @@
-type TApiErrorStatus = 400 | 401 | 404 | 500;
+type TApiErrorStatus = 400 | 401 | 403 | 404 | 500;
 
 interface IApiError extends Error {
   status: TApiErrorStatus;
@@ -14,6 +14,10 @@ class ApiError extends Error implements IApiError {
 
   static Unauthorized(message = 'Unauthorized') {
     return new ApiError(401, message);
+  }
+
+  static Forbidden(message = 'Forbidden') {
+    return new ApiError(403, message);
   }
 
   static BadRequest(message: string) {

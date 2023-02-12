@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import CardModel from '../models/card-model';
+import { IUserSchema } from '../models/user-model';
 import ApiError from '../exceptions/api-error';
 import { CardServiceTypes } from './services-types';
 import { RelatedCardSchemaKeys } from '../models/models-types';
@@ -39,16 +40,27 @@ async function getCards(): CardServiceTypes.GetCardsReturn {
   }
 }
 
-async function deleteCard(cardId: string): CardServiceTypes.DeleteCardReturn {
+async function deleteCard(
+  props: CardServiceTypes.DeleteCardProps
+): CardServiceTypes.DeleteCardReturn {
   try {
-    const deletedCard = await CardModel.findByIdAndDelete(cardId).populate([
-      RelatedCardSchemaKeys.likes,
-      RelatedCardSchemaKeys.owner,
-    ]);
+    const { cardId, userId } = props;
 
-    if (deletedCard === null) {
+    const preservedCard = await CardModel.findById(cardId).populate<{
+      owner: IUserSchema;
+      likes: IUserSchema[];
+    }>([RelatedCardSchemaKeys.likes, RelatedCardSchemaKeys.owner]);
+
+    if (preservedCard === null) {
       throw ApiError.NotFound();
     }
+
+    if (preservedCard.owner.id !== userId) {
+      throw ApiError.Forbidden();
+    }
+
+    const deletedCard = await preservedCard.delete();
+
     return deletedCard;
   } catch (error) {
     if (error instanceof ApiError) {

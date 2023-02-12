@@ -52,4 +52,22 @@ const updateAvatarBody = celebrate({
   }),
 });
 
-export default { signinBody, signupBody, updateUserDataBody, updateAvatarBody };
+interface PostCard {
+  name: string;
+  link: string;
+}
+
+const postCardBody = celebrate({
+  body: Joi.object<PostCard>({
+    name: Joi.string().min(2).max(30).required().trim(),
+    link: Joi.string().required(),
+  }),
+});
+
+export default {
+  signinBody,
+  signupBody,
+  updateUserDataBody,
+  updateAvatarBody,
+  postCardBody,
+};

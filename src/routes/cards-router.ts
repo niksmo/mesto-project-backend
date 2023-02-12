@@ -1,9 +1,14 @@
 import express from 'express';
 import cardsController from '../controllers/cards-controller';
+import validationMiddleware from '../middlewares/validation-middleware';
 
 const cardsRouter = express.Router();
 
-cardsRouter.post('/', cardsController.postCard);
+cardsRouter.post(
+  '/',
+  validationMiddleware.postCardBody,
+  cardsController.postCard
+);
 
 cardsRouter.get('/', cardsController.getCards);
 
