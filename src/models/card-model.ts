@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { RelatedCardSchemaKeys } from './types';
+import { RelatedCardSchemaKeys } from './models-types';
 
 interface ICardSchema {
   name: string;
@@ -21,6 +21,17 @@ const cardSchema = new Schema<ICardSchema>(
     link: {
       type: String,
       required: true,
+      validate: {
+        validator(url: string) {
+          // eslint-disable-next-line no-useless-escape
+          return /https?:\/\/((www\.[-\w@:%\.\+~#=]{1,256}\.)|([-0-9a-vx-z@:%\.\+~#=]{1,256}\.))[a-z0-9()]{2,6}\b([-\w()@:%\.\+~#=/?&]*)/i.test(
+            url
+          );
+        },
+        message(props) {
+          return `"${props.value}" not correspond to correct url address`;
+        },
+      },
       trim: true,
     },
     [RelatedCardSchemaKeys.owner]: {
