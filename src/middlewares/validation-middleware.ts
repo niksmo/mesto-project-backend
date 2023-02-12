@@ -26,7 +26,10 @@ const signupBody = celebrate({
     password: Joi.string().required().trim(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(200),
-    avatar: Joi.string(),
+    avatar: Joi.string().uri({
+      scheme: /https?/,
+      domain: { allowFullyQualified: true },
+    }),
   }),
 });
 
@@ -48,7 +51,12 @@ interface UpdateAvatarSchema {
 
 const updateAvatarBody = celebrate({
   body: Joi.object<UpdateAvatarSchema>({
-    avatar: Joi.string().required(),
+    avatar: Joi.string()
+      .uri({
+        scheme: /https?/,
+        domain: { allowFullyQualified: true },
+      })
+      .required(),
   }),
 });
 
@@ -60,7 +68,12 @@ interface PostCard {
 const postCardBody = celebrate({
   body: Joi.object<PostCard>({
     name: Joi.string().min(2).max(30).required().trim(),
-    link: Joi.string().required(),
+    link: Joi.string()
+      .uri({
+        scheme: /https?/,
+        domain: { allowFullyQualified: true },
+      })
+      .required(),
   }),
 });
 
