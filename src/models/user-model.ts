@@ -36,17 +36,20 @@ const userSchema = new Schema<IUserSchema>(
     },
     avatar: {
       type: String,
-      // validate: {
-      //   validator(uri: string) {
-      //     return /\d{3}-\d{3}-\d{4}/.test(v);
-      //   },
-      //   message(props) {
-      //     debugger;
-      //     return `${props.value} is ... some text!`;
-      //   },
-      // },
+      validate: {
+        validator(url: string) {
+          // eslint-disable-next-line no-useless-escape
+          return /https?:\/\/((www\.[-\w@:%\.\+~#=]{1,256}\.)|([-0-9a-vx-z@:%\.\+~#=]{1,256}\.))[a-z0-9()]{2,6}\b([-\w()@:%\.\+~#=/?&]*)/i.test(
+            url
+          );
+        },
+        message(props) {
+          return `"${props.value}" not correspond to correct url address`;
+        },
+      },
       default:
         'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
+      trim: true,
     },
   },
   { versionKey: false }
