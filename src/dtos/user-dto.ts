@@ -1,19 +1,19 @@
-import mongoose from 'mongoose';
+import { IUserSchema } from '../models/user-model';
+
+type TUserDocument = IUserSchema;
 
 interface IUserDtoModel {
-  _id: mongoose.Types.ObjectId;
+  _id: string;
   name: string;
   about: string;
   avatar: string;
   email: string;
 }
 
-type TUserDto = IUserDtoModel;
-
-function getDto(model: IUserDtoModel): TUserDto {
+function getDto(model: TUserDocument): IUserDtoModel {
   const { _id, name, about, avatar, email } = model;
 
-  const userDto = { _id, name, about, avatar, email };
+  const userDto = { _id: String(_id), name, about, avatar, email };
 
   return userDto;
 }
