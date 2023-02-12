@@ -40,6 +40,12 @@ export namespace UserServiceTypes {
 
   export type FindUserByIdReturn = Promise<PreservedUserObject>;
 
+  export interface GetOwnDataProps {
+    userId: string;
+  }
+
+  export type GetOwnDataReturn = Promise<PreservedUserObject>;
+
   export interface ChangeOwnDataProps {
     userId: string;
     name: string;

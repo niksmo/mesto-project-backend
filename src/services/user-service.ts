@@ -90,6 +90,31 @@ async function findUserById(
   }
 }
 
+async function getOwnData(
+  props: UserServiceTypes.GetOwnDataProps
+): UserServiceTypes.GetOwnDataReturn {
+  try {
+    const { userId } = props;
+
+    const user = await UserModel.findById(userId);
+
+    if (user === null) {
+      throw ApiError.NotFound();
+    }
+    return user;
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
+    if (error instanceof mongoose.Error.ValidationError) {
+      throw ApiError.BadRequest(error.message);
+    }
+
+    throw ApiError.InternalError();
+  }
+}
+
 async function changeOwnData(
   props: UserServiceTypes.ChangeOwnDataProps
 ): UserServiceTypes.ChangeOwnDataReturn {
@@ -157,6 +182,7 @@ export default {
   login,
   getUsers,
   findUserById,
+  getOwnData,
   changeOwnData,
   changeAvatar,
 };

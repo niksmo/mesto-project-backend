@@ -94,6 +94,24 @@ async function findUserById(
   }
 }
 
+async function getOwnData(req: Request, res: Response, next: NextFunction) {
+  if (isReqWithUser(req)) {
+    try {
+      const { _id: userId } = req.user;
+
+      const userData = await userService.getOwnData({
+        userId,
+      });
+
+      res.send(userData);
+    } catch (error) {
+      next(error);
+    }
+  } else {
+    next(ApiError.Unauthorized());
+  }
+}
+
 interface IChangeOwnDataReqBody {
   name: string;
   about: string;
@@ -159,6 +177,7 @@ export default {
   login,
   getUsers,
   findUserById,
+  getOwnData,
   changeOwnData,
   changeAvatar,
 };
