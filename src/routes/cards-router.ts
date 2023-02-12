@@ -12,10 +12,22 @@ cardsRouter.post(
 
 cardsRouter.get('/', cardsController.getCards);
 
-cardsRouter.delete('/:cardId', cardsController.deleteCard);
+cardsRouter.delete(
+  '/:cardId',
+  validationMiddleware.cardIdParams,
+  cardsController.deleteCard
+);
 
-cardsRouter.put('/:cardId/likes', cardsController.likeCard);
+cardsRouter.put(
+  '/:cardId/likes',
+  validationMiddleware.cardIdParams,
+  cardsController.likeCard
+);
 
-cardsRouter.delete('/:cardId/likes', cardsController.dislikeCard);
+cardsRouter.delete(
+  '/:cardId/likes',
+  validationMiddleware.cardIdParams,
+  cardsController.dislikeCard
+);
 
 export default cardsRouter;

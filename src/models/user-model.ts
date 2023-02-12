@@ -36,6 +36,15 @@ const userSchema = new Schema<IUserSchema>(
     },
     avatar: {
       type: String,
+      // validate: {
+      //   validator(uri: string) {
+      //     return /\d{3}-\d{3}-\d{4}/.test(v);
+      //   },
+      //   message(props) {
+      //     debugger;
+      //     return `${props.value} is ... some text!`;
+      //   },
+      // },
       default:
         'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     },

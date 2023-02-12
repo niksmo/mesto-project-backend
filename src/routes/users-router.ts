@@ -14,7 +14,11 @@ usersRouter.post(
 
 usersRouter.get('/me', usersController.getOwnData);
 
-usersRouter.get('/:userId', usersController.findUserById);
+usersRouter.get(
+  '/:userId',
+  validationMiddleware.getUserById,
+  usersController.findUserById
+);
 
 usersRouter.patch(
   '/me',

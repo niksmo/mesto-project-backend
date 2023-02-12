@@ -33,6 +33,16 @@ const signupBody = celebrate({
   }),
 });
 
+interface GetUserByIdParamsSchema {
+  userId: string;
+}
+
+const getUserById = celebrate({
+  params: Joi.object<GetUserByIdParamsSchema>({
+    userId: Joi.string().alphanum().length(24).required(),
+  }),
+});
+
 interface UpdateUserDataSchema {
   name: string;
   about: string;
@@ -77,10 +87,22 @@ const postCardBody = celebrate({
   }),
 });
 
+interface CardIdParamsSchema {
+  cardId: string;
+}
+
+const cardIdParams = celebrate({
+  params: Joi.object<CardIdParamsSchema>({
+    cardId: Joi.string().alphanum().length(24).required(),
+  }),
+});
+
 export default {
   signinBody,
   signupBody,
   updateUserDataBody,
   updateAvatarBody,
   postCardBody,
+  getUserById,
+  cardIdParams,
 };
