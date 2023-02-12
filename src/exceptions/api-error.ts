@@ -1,4 +1,4 @@
-type TApiErrorStatus = 400 | 401 | 403 | 404 | 500;
+type TApiErrorStatus = 400 | 401 | 403 | 404 | 409 | 500;
 
 interface IApiError extends Error {
   status: TApiErrorStatus;
@@ -22,6 +22,10 @@ class ApiError extends Error implements IApiError {
 
   static BadRequest(message: string) {
     return new ApiError(400, message);
+  }
+
+  static Conflict(message: string) {
+    return new ApiError(409, message);
   }
 
   static NotFound() {

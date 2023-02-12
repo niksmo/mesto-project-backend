@@ -25,7 +25,7 @@ async function createUser(
     return UserDto.getDto(preservedUser);
   } catch (error) {
     if (error instanceof Error && 'code' in error && error.code === 11000) {
-      throw ApiError.BadRequest('User already exist');
+      throw ApiError.Conflict('User already exist');
     }
 
     if (error instanceof mongoose.Error.ValidationError) {
