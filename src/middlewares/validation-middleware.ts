@@ -1,5 +1,5 @@
 import { celebrate, Joi } from 'celebrate';
-
+//name and about alphium
 interface SigninSchema {
   email: string;
   password: string;
@@ -26,7 +26,20 @@ const signupBody = celebrate({
     password: Joi.string().required().trim(),
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(200),
-    avatar: Joi.string(),
+    avatar: Joi.string().uri({
+      scheme: /https?/,
+      domain: { allowFullyQualified: true },
+    }),
+  }),
+});
+
+interface GetUserByIdParamsSchema {
+  userId: string;
+}
+
+const getUserById = celebrate({
+  params: Joi.object<GetUserByIdParamsSchema>({
+    userId: Joi.string().alphanum().length(24).required(),
   }),
 });
 
@@ -48,7 +61,12 @@ interface UpdateAvatarSchema {
 
 const updateAvatarBody = celebrate({
   body: Joi.object<UpdateAvatarSchema>({
-    avatar: Joi.string().required(),
+    avatar: Joi.string()
+      .uri({
+        scheme: /https?/,
+        domain: { allowFullyQualified: true },
+      })
+      .required(),
   }),
 });
 
@@ -60,7 +78,22 @@ interface PostCard {
 const postCardBody = celebrate({
   body: Joi.object<PostCard>({
     name: Joi.string().min(2).max(30).required().trim(),
-    link: Joi.string().required(),
+    link: Joi.string()
+      .uri({
+        scheme: /https?/,
+        domain: { allowFullyQualified: true },
+      })
+      .required(),
+  }),
+});
+
+interface CardIdParamsSchema {
+  cardId: string;
+}
+
+const cardIdParams = celebrate({
+  params: Joi.object<CardIdParamsSchema>({
+    cardId: Joi.string().alphanum().length(24).required(),
   }),
 });
 
@@ -70,4 +103,6 @@ export default {
   updateUserDataBody,
   updateAvatarBody,
   postCardBody,
+  getUserById,
+  cardIdParams,
 };

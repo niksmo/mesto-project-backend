@@ -40,14 +40,10 @@ interface ICardIdParams {
   cardId: string;
 }
 
-async function deleteCard(
-  req: Request<ICardIdParams>,
-  res: Response,
-  next: NextFunction
-) {
-  if (isReqWithUser<ICardIdParams>(req)) {
+async function deleteCard(req: Request, res: Response, next: NextFunction) {
+  if (isReqWithUser(req)) {
     try {
-      const { cardId } = req.params;
+      const { cardId } = req.params as unknown as ICardIdParams;
       const { _id: userId } = req.user;
       const preservedCard = await cardService.deleteCard({ cardId, userId });
       res.send(preservedCard);
@@ -59,15 +55,11 @@ async function deleteCard(
   }
 }
 
-async function likeCard(
-  req: Request<ICardIdParams>,
-  res: Response,
-  next: NextFunction
-) {
-  if (isReqWithUser<ICardIdParams>(req)) {
+async function likeCard(req: Request, res: Response, next: NextFunction) {
+  if (isReqWithUser(req)) {
     try {
       const { _id: userId } = req.user;
-      const { cardId } = req.params;
+      const { cardId } = req.params as unknown as ICardIdParams;
       const preservedCard = await cardService.likeCard({ cardId, userId });
       res.send(preservedCard);
     } catch (error) {
@@ -78,15 +70,11 @@ async function likeCard(
   }
 }
 
-async function dislikeCard(
-  req: Request<ICardIdParams>,
-  res: Response,
-  next: NextFunction
-) {
-  if (isReqWithUser<ICardIdParams>(req)) {
+async function dislikeCard(req: Request, res: Response, next: NextFunction) {
+  if (isReqWithUser(req)) {
     try {
       const { _id: userId } = req.user;
-      const { cardId } = req.params;
+      const { cardId } = req.params as unknown as ICardIdParams;
       const preservedCard = await cardService.dislikeCard({ cardId, userId });
       res.send(preservedCard);
     } catch (error) {

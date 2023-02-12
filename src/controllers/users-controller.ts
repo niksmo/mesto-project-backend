@@ -74,17 +74,13 @@ async function getUsers(
   }
 }
 
-interface IUserIdParams {
+interface IUserIdParams extends Request {
   userId: string;
 }
 
-async function findUserById(
-  req: Request<IUserIdParams, unknown, undefined>,
-  res: Response,
-  next: NextFunction
-) {
+async function findUserById(req: Request, res: Response, next: NextFunction) {
   try {
-    const { userId } = req.params;
+    const { userId } = (req as unknown as Request<IUserIdParams>).params;
 
     const user = await userService.findUserById({ userId });
 
