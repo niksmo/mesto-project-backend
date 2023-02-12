@@ -5,6 +5,7 @@ import { errors } from 'celebrate';
 import errorHandling from './middlewares/error-middleware';
 import routes from './routes';
 import { printInConsole } from './utils';
+import loggerMiddleware from './middlewares/logger-middleware';
 
 const { PORT = 3000, MONGODB_URI = 'mongodb://127.0.0.1:27017/mestodb' } =
   process.env;
@@ -19,7 +20,11 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
+app.use(loggerMiddleware.requestLogger);
+
 app.use('/', routes);
+
+app.use(loggerMiddleware.errorLogger);
 
 app.use(errors());
 

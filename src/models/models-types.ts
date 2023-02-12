@@ -5,4 +5,4 @@ export const enum RelatedCardSchemaKeys {
   owner = 'owner',
   likes = 'likes',
 }
-export type IDataBaseObjectId = Types.ObjectId;
+export type IDataBaseObjectId = Types.ObjectId | string;
