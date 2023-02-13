@@ -1,10 +1,16 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import ApiError from '../exceptions/api-error';
 import UserModel from '../models/user-model';
 import UserDto from '../dtos/user-dto';
 import tokenService from './token-service';
 import { UserServiceTypes } from './services-types';
+import {
+  BadRequestError,
+  ConflictError,
+  InternalError,
+  NotFoundError,
+  UnauthorizedError,
+} from '../exceptions/api-error';
 
 async function createUser(
   props: UserServiceTypes.CreateUserProps
@@ -25,13 +31,13 @@ async function createUser(
     return UserDto.getDto(preservedUser);
   } catch (error) {
     if (error instanceof Error && 'code' in error && error.code === 11000) {
-      throw ApiError.Conflict('User already exist');
+      throw new ConflictError('User already exist');
     }
 
     if (error instanceof mongoose.Error.ValidationError) {
-      throw ApiError.BadRequest(error.message);
+      throw new BadRequestError(error.message);
     }
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -43,13 +49,13 @@ async function login(
   const user = await UserModel.findOne({ email }, { password: 1 });
 
   if (user === null) {
-    throw ApiError.Unauthorized('Incorrect email or password');
+    throw new UnauthorizedError('Incorrect email or password');
   }
 
   const isPwdEqual = await bcrypt.compare(password, user.password);
 
   if (!isPwdEqual) {
-    throw ApiError.Unauthorized('Incorrect email or password');
+    throw new UnauthorizedError('Incorrect email or password');
   }
 
   const { accessToken } = tokenService.generateToken(user.id);
@@ -62,7 +68,7 @@ async function getUsers(): UserServiceTypes.GetUsersReturn {
 
     return users;
   } catch (error) {
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -74,19 +80,19 @@ async function findUserById(
     const user = await UserModel.findById(userId);
 
     if (user === null) {
-      throw ApiError.NotFound();
+      throw new NotFoundError();
     }
     return user;
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof NotFoundError) {
       throw error;
     }
 
     if (error instanceof mongoose.Error.CastError) {
-      throw ApiError.BadRequest('incorrect id template');
+      throw new BadRequestError('incorrect id template');
     }
 
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -99,19 +105,19 @@ async function getOwnData(
     const user = await UserModel.findById(userId);
 
     if (user === null) {
-      throw ApiError.NotFound();
+      throw new NotFoundError();
     }
     return user;
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof NotFoundError) {
       throw error;
     }
 
     if (error instanceof mongoose.Error.ValidationError) {
-      throw ApiError.BadRequest(error.message);
+      throw new BadRequestError(error.message);
     }
 
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -131,19 +137,19 @@ async function changeOwnData(
     );
 
     if (user === null) {
-      throw ApiError.NotFound();
+      throw new NotFoundError();
     }
     return user;
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof NotFoundError) {
       throw error;
     }
 
     if (error instanceof mongoose.Error.ValidationError) {
-      throw ApiError.BadRequest(error.message);
+      throw new BadRequestError(error.message);
     }
 
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -161,19 +167,19 @@ async function changeAvatar({
       }
     );
     if (user === null) {
-      throw ApiError.NotFound();
+      throw new NotFoundError();
     }
     return user;
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof NotFoundError) {
       throw error;
     }
 
     if (error instanceof mongoose.Error.ValidationError) {
-      throw ApiError.BadRequest(error.message);
+      throw new BadRequestError(error.message);
     }
 
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { RequestWithUser } from '../controllers/controllers-types';
-import ApiError from '../exceptions/api-error';
+import { UnauthorizedError } from '../exceptions/api-error';
 import tokenService from '../services/token-service';
 
 function authMiddleware(req: Request, Res: Response, next: NextFunction) {
@@ -16,7 +16,7 @@ function authMiddleware(req: Request, Res: Response, next: NextFunction) {
       next(error);
     }
   } else {
-    next(ApiError.Unauthorized());
+    next(new UnauthorizedError());
   }
 }
 

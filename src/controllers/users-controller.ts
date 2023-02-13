@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { RequestWithUser } from './controllers-types';
 import userService from '../services/user-service';
-import ApiError from '../exceptions/api-error';
 
 interface ICreateUserReqBody {
   email: string;
@@ -107,8 +106,6 @@ async function getOwnData(
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 
@@ -138,8 +135,6 @@ async function changeOwnData(
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 
@@ -167,8 +162,6 @@ async function changeAvatar(
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 

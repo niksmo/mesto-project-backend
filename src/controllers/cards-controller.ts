@@ -1,6 +1,5 @@
 import { Response, NextFunction } from 'express';
 import { RequestWithUser } from './controllers-types';
-import ApiError from '../exceptions/api-error';
 import cardService from '../services/card-service';
 
 interface IPostCardReqBody {
@@ -22,8 +21,6 @@ async function postCard(
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 
@@ -32,15 +29,11 @@ async function getCards(
   res: Response,
   next: NextFunction
 ) {
-  if (req.user) {
-    try {
-      const preservedCards = await cardService.getCards();
-      res.send(preservedCards);
-    } catch (error) {
-      next(error);
-    }
-  } else {
-    next(ApiError.Unauthorized());
+  try {
+    const preservedCards = await cardService.getCards();
+    res.send(preservedCards);
+  } catch (error) {
+    next(error);
   }
 }
 
@@ -58,8 +51,6 @@ async function deleteCard(
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 
@@ -77,8 +68,6 @@ async function likeCard(
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 
@@ -96,8 +85,6 @@ async function dislikeCard(
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 
