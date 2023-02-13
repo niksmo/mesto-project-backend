@@ -55,7 +55,8 @@ async function deleteCard(
       throw ApiError.NotFound();
     }
 
-    if (preservedCard.owner.id !== userId) {
+    // eslint-disable-next-line eqeqeq
+    if (preservedCard.owner.id != userId) {
       throw ApiError.Forbidden();
     }
 
