@@ -1,5 +1,5 @@
 import { celebrate, Joi } from 'celebrate';
-//name and about alphium
+
 interface SigninSchema {
   email: string;
   password: string;
@@ -39,7 +39,7 @@ interface GetUserByIdParamsSchema {
 
 const getUserById = celebrate({
   params: Joi.object<GetUserByIdParamsSchema>({
-    userId: Joi.string().alphanum().length(24).required(),
+    userId: Joi.string().hex().length(24).required(),
   }),
 });
 
@@ -93,7 +93,7 @@ interface CardIdParamsSchema {
 
 const cardIdParams = celebrate({
   params: Joi.object<CardIdParamsSchema>({
-    cardId: Joi.string().alphanum().length(24).required(),
+    cardId: Joi.string().hex().length(24).required(),
   }),
 });
 

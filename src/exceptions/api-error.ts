@@ -11,30 +11,50 @@ class ApiError extends Error implements IApiError {
     super(message);
     this.status = status;
   }
+}
 
-  static Unauthorized(message = 'Unauthorized') {
-    return new ApiError(401, message);
-  }
-
-  static Forbidden(message = 'Forbidden') {
-    return new ApiError(403, message);
-  }
-
-  static BadRequest(message: string) {
-    return new ApiError(400, message);
-  }
-
-  static Conflict(message: string) {
-    return new ApiError(409, message);
-  }
-
-  static NotFound() {
-    return new ApiError(404, 'Request source not found');
-  }
-
-  static InternalError() {
-    return new ApiError(500, 'Internal server error');
+class UnauthorizedError extends ApiError {
+  constructor(message: string = 'Unauthorized') {
+    super(401, message);
   }
 }
 
-export default ApiError;
+class ForbiddenError extends ApiError {
+  constructor(message: string = 'Forbidden') {
+    super(403, message);
+  }
+}
+
+class BadRequestError extends ApiError {
+  constructor(message: string) {
+    super(400, message);
+  }
+}
+
+class ConflictError extends ApiError {
+  constructor(message: string) {
+    super(409, message);
+  }
+}
+
+class NotFoundError extends ApiError {
+  constructor() {
+    super(404, 'Request source not found');
+  }
+}
+
+class InternalError extends ApiError {
+  constructor() {
+    super(500, 'Internal server error');
+  }
+}
+
+export {
+  ApiError,
+  UnauthorizedError,
+  ForbiddenError,
+  BadRequestError,
+  ConflictError,
+  NotFoundError,
+  InternalError,
+};
