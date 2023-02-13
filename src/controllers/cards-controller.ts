@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
+import { RequestWithUser } from './controllers-types';
 import ApiError from '../exceptions/api-error';
-import { isReqWithUser } from '../middlewares/auth-middleware';
 import cardService from '../services/card-service';
 
 interface IPostCardReqBody {
@@ -8,8 +8,12 @@ interface IPostCardReqBody {
   link: string;
 }
 
-async function postCard(req: Request, res: Response, next: NextFunction) {
-  if (isReqWithUser<any, IPostCardReqBody>(req)) {
+async function postCard(
+  req: RequestWithUser<never, IPostCardReqBody>,
+  res: Response,
+  next: NextFunction
+) {
+  if (req.user) {
     try {
       const { name, link } = req.body;
       const { _id: ownerId } = req.user;
@@ -23,8 +27,12 @@ async function postCard(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function getCards(req: Request, res: Response, next: NextFunction) {
-  if (isReqWithUser(req)) {
+async function getCards(
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) {
+  if (req.user) {
     try {
       const preservedCards = await cardService.getCards();
       res.send(preservedCards);
@@ -36,14 +44,14 @@ async function getCards(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-interface ICardIdParams {
-  cardId: string;
-}
-
-async function deleteCard(req: Request, res: Response, next: NextFunction) {
-  if (isReqWithUser(req)) {
+async function deleteCard(
+  req: RequestWithUser<{ cardId: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  if (req.user) {
     try {
-      const { cardId } = req.params as unknown as ICardIdParams;
+      const { cardId } = req.params;
       const { _id: userId } = req.user;
       const preservedCard = await cardService.deleteCard({ cardId, userId });
       res.send(preservedCard);
@@ -55,11 +63,15 @@ async function deleteCard(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function likeCard(req: Request, res: Response, next: NextFunction) {
-  if (isReqWithUser(req)) {
+async function likeCard(
+  req: RequestWithUser<{ cardId: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  if (req.user) {
     try {
       const { _id: userId } = req.user;
-      const { cardId } = req.params as unknown as ICardIdParams;
+      const { cardId } = req.params;
       const preservedCard = await cardService.likeCard({ cardId, userId });
       res.send(preservedCard);
     } catch (error) {
@@ -70,11 +82,15 @@ async function likeCard(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function dislikeCard(req: Request, res: Response, next: NextFunction) {
-  if (isReqWithUser(req)) {
+async function dislikeCard(
+  req: RequestWithUser<{ cardId: string }>,
+  res: Response,
+  next: NextFunction
+) {
+  if (req.user) {
     try {
       const { _id: userId } = req.user;
-      const { cardId } = req.params as unknown as ICardIdParams;
+      const { cardId } = req.params;
       const preservedCard = await cardService.dislikeCard({ cardId, userId });
       res.send(preservedCard);
     } catch (error) {

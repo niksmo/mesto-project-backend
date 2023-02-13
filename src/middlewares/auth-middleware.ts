@@ -1,25 +1,20 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
+import { RequestWithUser } from '../controllers/controllers-types';
 import ApiError from '../exceptions/api-error';
 import tokenService from '../services/token-service';
 
-type TRequestWithUser<P = Record<string, string>, T = any> = Request<
-  P,
-  any,
-  T
-> & {
-  user: {
-    _id: string;
-  };
-};
-
-function authMiddleware(req: Request, Res: Response, next: NextFunction) {
-  const { accessToken } = req.cookies as Record<string, string>;
+function authMiddleware(
+  req: RequestWithUser,
+  Res: Response,
+  next: NextFunction
+) {
+  const { accessToken } = req.cookies;
 
   if (accessToken) {
     try {
       const userId = tokenService.validateToken(accessToken);
 
-      (req as TRequestWithUser).user = { _id: userId };
+      req.user = { _id: userId };
       next();
     } catch (error) {
       next(error);
@@ -27,12 +22,6 @@ function authMiddleware(req: Request, Res: Response, next: NextFunction) {
   } else {
     next(ApiError.Unauthorized());
   }
-}
-
-export function isReqWithUser<P = Record<string, string>, T = any>(
-  req: Request<P>
-): req is TRequestWithUser<P, T> {
-  return 'user' in req || false;
 }
 
 export default authMiddleware;

@@ -9,11 +9,14 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "import"],
   "settings": {
     "import/resolver": {
       "node": {
         "extensions": [".ts", ".js", ".json"]
+      },
+      "typescript": {
+        "alwaysTryTypes": true
       }
     },
     "import/extensions": [".js", ".ts"]
