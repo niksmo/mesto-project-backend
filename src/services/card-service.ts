@@ -1,9 +1,14 @@
 import mongoose from 'mongoose';
 import CardModel from '../models/card-model';
 import { IUserSchema } from '../models/user-model';
-import ApiError from '../exceptions/api-error';
 import { CardServiceTypes } from './services-types';
 import { RelatedCardSchemaKeys } from '../models/models-types';
+import {
+  BadRequestError,
+  ForbiddenError,
+  InternalError,
+  NotFoundError,
+} from '../exceptions/api-error';
 
 async function postCard(
   props: CardServiceTypes.PostCardProps
@@ -21,9 +26,9 @@ async function postCard(
     return populatedPreservedCard;
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
-      throw ApiError.BadRequest(error.message);
+      throw new BadRequestError(error.message);
     }
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -36,7 +41,7 @@ async function getCards(): CardServiceTypes.GetCardsReturn {
 
     return preservedCards;
   } catch (error) {
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -52,26 +57,27 @@ async function deleteCard(
     }>([RelatedCardSchemaKeys.likes, RelatedCardSchemaKeys.owner]);
 
     if (preservedCard === null) {
-      throw ApiError.NotFound();
+      throw new NotFoundError();
     }
 
-    if (preservedCard.owner.id !== userId) {
-      throw ApiError.Forbidden();
+    // eslint-disable-next-line eqeqeq
+    if (preservedCard.owner.id != userId) {
+      throw new ForbiddenError();
     }
 
     const deletedCard = await preservedCard.delete();
 
     return deletedCard;
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof ForbiddenError) {
       throw error;
     }
 
     if (error instanceof mongoose.Error.CastError) {
-      throw ApiError.BadRequest('incorrect id template');
+      throw new BadRequestError('incorrect id template');
     }
 
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -90,19 +96,19 @@ async function likeCard(
     ).populate([RelatedCardSchemaKeys.likes, RelatedCardSchemaKeys.owner]);
 
     if (preservedCard === null) {
-      throw ApiError.NotFound();
+      throw new NotFoundError();
     }
     return preservedCard;
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof NotFoundError) {
       throw error;
     }
 
     if (error instanceof mongoose.Error.CastError) {
-      throw ApiError.BadRequest('incorrect id template');
+      throw new BadRequestError('incorrect id template');
     }
 
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -121,19 +127,19 @@ async function dislikeCard(
     ).populate([RelatedCardSchemaKeys.likes, RelatedCardSchemaKeys.owner]);
 
     if (preservedCard === null) {
-      throw ApiError.NotFound();
+      throw new NotFoundError();
     }
     return preservedCard;
   } catch (error) {
-    if (error instanceof ApiError) {
+    if (error instanceof NotFoundError) {
       throw error;
     }
 
     if (error instanceof mongoose.Error.CastError) {
-      throw ApiError.BadRequest('incorrect id template');
+      throw new BadRequestError('incorrect id template');
     }
 
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 

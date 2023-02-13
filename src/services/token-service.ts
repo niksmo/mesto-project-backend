@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import ApiError from '../exceptions/api-error';
+import { InternalError, UnauthorizedError } from '../exceptions/api-error';
 
 interface IAccessToken {
   accessToken: string;
@@ -15,7 +15,7 @@ function generateToken(userId: string): IAccessToken {
 
     return { accessToken };
   } catch (error) {
-    throw ApiError.InternalError();
+    throw new InternalError();
   }
 }
 
@@ -27,9 +27,9 @@ function validateToken(accessToken: string): string {
       return userId._id as string;
     }
 
-    throw ApiError.Unauthorized();
+    throw new UnauthorizedError();
   } catch (error) {
-    throw ApiError.Unauthorized();
+    throw new UnauthorizedError();
   }
 }
 

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import ApiError from '../exceptions/api-error';
+import { ApiError } from '../exceptions/api-error';
 
 function errorHandling(
   err: unknown,

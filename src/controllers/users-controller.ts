@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
+import { RequestWithUser } from './controllers-types';
 import userService from '../services/user-service';
-import ApiError from '../exceptions/api-error';
-import { isReqWithUser } from '../middlewares/auth-middleware';
 
 interface ICreateUserReqBody {
   email: string;
@@ -12,7 +11,7 @@ interface ICreateUserReqBody {
 }
 
 async function createUser(
-  req: Request<unknown, unknown, ICreateUserReqBody>,
+  req: Request<never, never, ICreateUserReqBody>,
   res: Response,
   next: NextFunction
 ) {
@@ -39,7 +38,7 @@ interface ILoginReqBody {
 }
 
 async function login(
-  req: Request<unknown, unknown, ILoginReqBody>,
+  req: Request<never, never, ILoginReqBody>,
   res: Response,
   next: NextFunction
 ) {
@@ -61,7 +60,7 @@ async function login(
 }
 
 async function getUsers(
-  req: Request<unknown, unknown, undefined>,
+  req: RequestWithUser,
   res: Response,
   next: NextFunction
 ) {
@@ -74,13 +73,13 @@ async function getUsers(
   }
 }
 
-interface IUserIdParams extends Request {
-  userId: string;
-}
-
-async function findUserById(req: Request, res: Response, next: NextFunction) {
+async function findUserById(
+  req: RequestWithUser<{ userId: string }>,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const { userId } = (req as unknown as Request<IUserIdParams>).params;
+    const { userId } = req.params;
 
     const user = await userService.findUserById({ userId });
 
@@ -90,8 +89,12 @@ async function findUserById(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-async function getOwnData(req: Request, res: Response, next: NextFunction) {
-  if (isReqWithUser(req)) {
+async function getOwnData(
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) {
+  if (req.user) {
     try {
       const { _id: userId } = req.user;
 
@@ -103,8 +106,6 @@ async function getOwnData(req: Request, res: Response, next: NextFunction) {
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 
@@ -114,11 +115,11 @@ interface IChangeOwnDataReqBody {
 }
 
 async function changeOwnData(
-  req: Request<any, unknown, IChangeOwnDataReqBody>,
+  req: RequestWithUser<never, IChangeOwnDataReqBody>,
   res: Response,
   next: NextFunction
 ) {
-  if (isReqWithUser<IChangeOwnDataReqBody>(req)) {
+  if (req.user) {
     try {
       const { _id: userId } = req.user;
 
@@ -134,8 +135,6 @@ async function changeOwnData(
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 
@@ -144,11 +143,11 @@ interface IChangeAvatarReqBody {
 }
 
 async function changeAvatar(
-  req: Request<any, unknown, IChangeAvatarReqBody>,
+  req: RequestWithUser<never, IChangeAvatarReqBody>,
   res: Response,
   next: NextFunction
 ) {
-  if (isReqWithUser<IChangeAvatarReqBody>(req)) {
+  if (req.user) {
     try {
       const { _id: userId } = req.user;
 
@@ -163,8 +162,6 @@ async function changeAvatar(
     } catch (error) {
       next(error);
     }
-  } else {
-    next(ApiError.Unauthorized());
   }
 }
 
