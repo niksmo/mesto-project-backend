@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { BadRequestError } from '../exceptions/api-error';
+import { NotFoundError } from '../exceptions/api-error';
 
 function failureRoute(req: Request, res: Response, next: NextFunction) {
-  next(new BadRequestError('Page not found'));
+  next(new NotFoundError('Page not found'));
 }
 
 export default failureRoute;

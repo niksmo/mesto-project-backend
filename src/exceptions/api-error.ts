@@ -38,8 +38,8 @@ class ConflictError extends ApiError {
 }
 
 class NotFoundError extends ApiError {
-  constructor() {
-    super(404, 'Request source not found');
+  constructor(message: string = 'Request source not found') {
+    super(404, message);
   }
 }
 
