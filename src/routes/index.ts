@@ -4,8 +4,11 @@ import failureRouteMiddleware from '../middlewares/failure-route-middleware';
 import authRouter from './auth-router';
 import cardsRouter from './cards-router';
 import usersRouter from './users-router';
+import crashTestRouter from './crash-test-router';
 
 const router = express.Router();
+
+router.use(crashTestRouter);
 
 router.use(authRouter);
 
