@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import mongoose, { Error } from 'mongoose';
@@ -6,6 +7,8 @@ import errorHandling from './middlewares/error-middleware';
 import routes from './routes';
 import { printInConsole } from './utils';
 import loggerMiddleware from './middlewares/logger-middleware';
+
+dotenv.config();
 
 const { PORT = 3000, MONGODB_URI = 'mongodb://127.0.0.1:27017/mestodb' } =
   process.env;
