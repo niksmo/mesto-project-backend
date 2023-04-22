@@ -10,7 +10,7 @@ import loggerMiddleware from './middlewares/logger-middleware';
 
 dotenv.config();
 
-const { PORT = 3000, MONGODB_URI = 'mongodb://127.0.0.1:27017/mestodb' } =
+const { PORT = 3010, MONGODB_URI = 'mongodb://127.0.0.1:27017/mestodb' } =
   process.env;
 
 mongoose.set('strictQuery', false);
