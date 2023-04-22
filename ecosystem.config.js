@@ -19,8 +19,9 @@ module.exports = {
       ref: DEPLOY_REF,
       repo: 'git@github.com:NikolaySmolov/mesto-project-backend.git',
       path: DEPLOY_PATH,
-      'pre-deploy-local': `scp ./.env ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}`,
-      'post-deploy': 'npm i && npm run build',
+      'pre-deploy': 'npm i && npm run build',
+      'pre-deploy-local': `scp ./.env ${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_PATH}/current`,
+      'post-deploy': 'pm2 startOrRestart ecosystem.config.js',
     },
   },
 };
